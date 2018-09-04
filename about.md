@@ -4,12 +4,10 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+Changeset is lightweight CQRS/ES library for PHP. It is based little bit on Prooph and little bit on Broadway.
+However it is much simplified and basic functionality contains maybe dozen of classes.
 
-### More Information
+### Project motivation
 
-A place to include any other types of information that you'd like to include about yourself.
+#### Simplification
 
-### Contact me
-
-[email@domain.com](mailto:email@domain.com)
