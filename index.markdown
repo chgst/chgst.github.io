@@ -1,1 +1,0 @@
-# Changeset - lightweight CQRS/ES library 
