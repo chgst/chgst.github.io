@@ -43,11 +43,12 @@ Project has been split into couple of sub projects to allow you to override almo
 relies on interfaces defined in [chgst/common](https://github.com/chgst/common). It means you can write your own
 implementation of about everything in **Changeset** library if you want.
 
-You will find the main implementation in [chgst/chgset](https://github.com/chgst/chgst). Currently there is only 5 PHP
+You will find the main implementation in [chgst/chgst](https://github.com/chgst/chgst). Currently there is only 5 PHP
 classes there.
 
 There is also a [datastore Doctrine implementation](https://github.com/chgst/persistence-doctrine) which is an optional
-dependency. It contains litarally 1 PHP class.
+dependency. It contains literally 1 PHP class. You can implement your own persistence to any datastore you want. All you
+need to do is to implement 1 interface.
 
 And finally there is [a Symfony bundle](https://github.com/chgst/chgst-bundle) if you want to use **Changeset** with
 your Symfony projects.
