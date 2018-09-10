@@ -97,6 +97,12 @@ class DefaultEvent extends Changeset\Event\Event
 }
 ```
 
+Create schema mapping in the database:
+
+```bash
+./vendor/bin/doctrine orm:schema-tool:update -f
+```
+
 Create new file called `example.php` with following content.
 
 ```php
@@ -178,3 +184,126 @@ Now run the code and you shall see the message in the console:
 ```
 An event named: "enter_building_completed" occured on Building with id "main": {"user":"bob"}
 ```
+
+Now I'm going to add projector which will persist information into read model. Let's start with creating data read model for
+Building. Create PHP class:
+
+```php
+<?php
+
+class Building
+{
+    /** @var string */
+    public $id;
+
+    /** @var array */
+    public $people;
+}
+```
+
+I have user public properties here to make code shorter, but please do not do it, use getters and setters instead.
+
+Now create Doctrine mapping
+
+```yaml
+# config/yaml/Building.dcm.yml
+Building:
+
+  type: entity
+
+  id:
+    id:
+      type: string
+      strategy: none
+
+  fields:
+    people:
+      type: string
+
+```
+
+Update schema mapping in database:
+
+```bash
+./vendor/bin/doctrine orm:schema-tool:update -f
+```
+
+Now, create projector PHP class:
+
+```php
+<?php
+
+# src/BuildingEnterProjector.php
+
+use Changeset\Event\EventInterface;
+use Changeset\Event\ProjectorInterface;
+use Doctrine\ORM\EntityManager;
+
+class BuildingEnterProjector implements ProjectorInterface
+{
+    /** @var EntityManager */
+    private $em;
+
+    public function __construct(EntityManager $em)
+    {
+        $this->em = $em;
+    }
+
+    public function supports(EventInterface $event): bool
+    {
+        return $event->getName() == 'enter_building_completed';
+    }
+
+    public function process(EventInterface $event)
+    {
+        $building = $this->em->getRepository(Building::class)->find($event->getAggregateId());
+
+        if( ! $building)
+        {
+            $building = new Building();
+            $building->id = $event->getAggregateId();
+            $building->people = '[]';
+        }
+
+        $people = json_decode($building->people, true);
+        $payload = json_decode($event->getPayload(), true);
+        
+        if( ! in_array($payload['user'], $people))
+        {
+            $people[] = $payload['user'];
+            $building->people = json_encode($people);
+
+            $this->em->persist($building);
+            $this->em->flush($building);
+        }
+
+        printf(
+            "There are currently %d person(s) in the %s %s\n",
+            count($people), $event->getAggregateId(), $event->getAggregateType()
+        );
+    }
+}
+
+```
+
+And add projector to event bus:
+
+```php
+<?php
+
+// other code here
+
+$buildingEnterProjector = new BuildingEnterProjector($entityManager);
+$eventBus->addProjector($buildingEnterProjector);
+
+$commandBus->dispatch(new Command('enter_building', 'Building', 'main', json_encode(['user' => 'bob'])));
+```
+
+Now when you run it again with `php example.php` you should see:
+
+```
+There are currently 1 person(s) in the main Building
+An event named: "enter_building_completed" occured on Building with id "main" with payload {"user":"bob"}
+```
+
+This is it!
