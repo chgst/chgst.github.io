@@ -97,6 +97,17 @@ class DefaultEvent extends Changeset\Event\Event
 }
 ```
 
+Configure doctrine CLI:
+
+```php
+<?php
+# config/cli-config.php
+
+require_once "bootstrap.php";
+
+return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet($entityManager);
+```
+
 Create schema mapping in the database:
 
 ```bash
@@ -307,3 +318,6 @@ An event named: "enter_building_completed" occured on Building with id "main" wi
 ```
 
 This is it!
+
+If you have troubles to get it running, have a look on this repo: [https://github.com/chgst/chgst-example](https://github.com/chgst/chgst-example)
+ 
