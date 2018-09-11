@@ -12,8 +12,9 @@ theme: jekyll-theme-hacker
 
 show_downloads: false
 
-github:
-  repository_url: https://github.com/chgst
+github: [metadata]
+#  repository_url: https://github.com/chgst
+#  metadata: ~
 
 google_analytics: UA-125572701-1
 
