@@ -244,6 +244,7 @@ PLATFORMS
 DEPENDENCIES
   github-pages (= 192)
   jekyll (~> 3.7.4)
+  jekyll-theme-hacker (~> 0.1.1)
   tzinfo-data
 
 BUNDLED WITH
